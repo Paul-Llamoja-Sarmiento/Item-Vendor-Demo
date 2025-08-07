@@ -50,7 +50,6 @@ void UInteractionComponent::BindToOwnerCapsuleEvents()
 	{
 		OwnerCapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &UInteractionComponent::OnCapsuleBeginOverlap);
 		OwnerCapsuleComponent->OnComponentEndOverlap.AddDynamic(this, &UInteractionComponent::OnCapsuleEndOverlap);
-		UE_LOG(LogTemp, Warning, TEXT("Binding to OnComponentBeginOverlap"));
 	}	
 }
 
@@ -61,7 +60,6 @@ void UInteractionComponent::UnbindFromOwnerCapsuleEvents()
 		OwnerCapsuleComponent->OnComponentBeginOverlap.RemoveDynamic(this, &UInteractionComponent::OnCapsuleBeginOverlap);
 		OwnerCapsuleComponent->OnComponentEndOverlap.RemoveDynamic(this, &UInteractionComponent::OnCapsuleEndOverlap);
 		OwnerCapsuleComponent = nullptr;
-		UE_LOG(LogTemp, Warning, TEXT("Unbinding from OnComponentBeginOverlap"));
 	}
 }
 
@@ -73,7 +71,6 @@ void UInteractionComponent::OnCapsuleBeginOverlap(UPrimitiveComponent* Overlappe
 		// We are considering that we only can interact with one interactable at a time.
 		// If we want to support multiple interactables, we can use an array or a set to store them.
 		CurrentInteractableObject = OtherActor;
-		UE_LOG(LogTemp, Warning, TEXT("OnCapsuleBeginOverlap with interactable actor %s"), *OtherActor->GetName());
 	}
 }
 
@@ -83,7 +80,6 @@ void UInteractionComponent::OnCapsuleEndOverlap(UPrimitiveComponent* OverlappedC
 	if (CurrentInteractableObject == OtherActor)
 	{
 		CurrentInteractableObject = nullptr;
-		UE_LOG(LogTemp, Warning, TEXT("OnCapsuleEndOverlap with interactable actor %s"), *OtherActor->GetName());
 	}
 }
 
@@ -98,7 +94,6 @@ void UInteractionComponent::Server_RequestInteract_Implementation(UObject* Inter
 	{
 		// Do some verifications depending on the game logic, like if the player is close enough to the interactable, etc.
 		IInteractableInterface::Execute_IInteract(InteractableActor, GetOwner());
-		UE_LOG(LogTemp, Warning, TEXT("Server_RequestInteract called for actor %s"), *InteractableActor->GetName());
 	}
 }
 
