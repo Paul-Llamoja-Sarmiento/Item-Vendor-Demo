@@ -2,14 +2,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "itemBaseDefinition.h"
+#include "ItemBaseDefinition.h"
 #include "ResourceDefinition.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ITEMVENDORDEMO_API UResourceDefinition : public UitemBaseDefinition
+class ITEMVENDORDEMO_API UResourceDefinition : public UItemBaseDefinition
 {
 	GENERATED_BODY()
 

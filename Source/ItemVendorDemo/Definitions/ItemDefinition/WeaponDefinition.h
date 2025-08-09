@@ -2,14 +2,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "itemBaseDefinition.h"
+#include "ItemBaseDefinition.h"
 #include "WeaponDefinition.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ITEMVENDORDEMO_API UWeaponDefinition : public UitemBaseDefinition
+class ITEMVENDORDEMO_API UWeaponDefinition : public UItemBaseDefinition
 {
 	GENERATED_BODY()
 	

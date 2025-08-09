@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "itemBaseDefinition.generated.h"
+#include "ItemBaseDefinition.generated.h"
 
 /**
  * 
  */
 UCLASS(Abstract, BlueprintType)
-class ITEMVENDORDEMO_API UitemBaseDefinition : public UPrimaryDataAsset
+class ITEMVENDORDEMO_API UItemBaseDefinition : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 

@@ -2,14 +2,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "itemBaseDefinition.h"
+#include "ItemBaseDefinition.h"
 #include "PotionDefinition.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ITEMVENDORDEMO_API UPotionDefinition : public UitemBaseDefinition
+class ITEMVENDORDEMO_API UPotionDefinition : public UItemBaseDefinition
 {
 	GENERATED_BODY()
 	

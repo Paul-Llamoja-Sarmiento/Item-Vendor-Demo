@@ -2,3 +2,22 @@
 
 
 #include "DynamicMenuControllerBase.h"
+
+#include "Blueprint/UserWidget.h"
+
+void UDynamicMenuControllerBase::InitializeMenu(UUserWidget* InMenu)
+{
+	Menu = InMenu;
+	BindToMenuInterface();
+}
+
+void UDynamicMenuControllerBase::CloseMenu()
+{
+	ClearControllerBindings();
+	if (IsValid(Menu))
+	{
+		Menu->RemoveFromParent();	
+	}
+
+	Menu = nullptr;
+}
