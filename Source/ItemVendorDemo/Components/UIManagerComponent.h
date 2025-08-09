@@ -49,4 +49,7 @@ private:
 	void LoadAndCreateMenu(TSubclassOf<UDynamicMenuControllerBase> ControllerClass,
 	                       TSubclassOf<UUserWidget> WidgetClass,
 	                       const FInstancedStruct& Payload);
+
+	UFUNCTION()
+	void OnCurrentMenuClosed();
 };

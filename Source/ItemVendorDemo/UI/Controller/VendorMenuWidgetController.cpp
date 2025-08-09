@@ -17,22 +17,22 @@ void UVendorMenuWidgetController::ClearControllerBindings()
 {
 	if (ExitButtonClickedDelegate.IsBound())
 	{
-		IVendorWidgetInterface::Execute_IUnbindFromOnExitButtonClicked(Menu, ExitButtonClickedDelegate);
+		IVendorWidgetInterface::Execute_IUnbindFromOnExitButtonClicked(MenuReference, ExitButtonClickedDelegate);
 	}
 
 	if (PurchaseButtonClickedDelegate.IsBound())
 	{
-		IVendorWidgetInterface::Execute_IUnbindFromOnPurchaseButtonClicked(Menu, PurchaseButtonClickedDelegate);
+		IVendorWidgetInterface::Execute_IUnbindFromOnPurchaseButtonClicked(MenuReference, PurchaseButtonClickedDelegate);
 	}
 }
 
 void UVendorMenuWidgetController::BindToMenuInterface()
 {
 	ExitButtonClickedDelegate.BindDynamic(this, &UVendorMenuWidgetController::OnExitButtonClicked);
-	IVendorWidgetInterface::Execute_IBindToOnExitButtonClicked(Menu, ExitButtonClickedDelegate);
+	IVendorWidgetInterface::Execute_IBindToOnExitButtonClicked(MenuReference, ExitButtonClickedDelegate);
 
 	PurchaseButtonClickedDelegate.BindDynamic(this, &UVendorMenuWidgetController::OnPurchaseButtonClicked);
-	IVendorWidgetInterface::Execute_IBindToOnPurchaseButtonClicked(Menu, PurchaseButtonClickedDelegate);
+	IVendorWidgetInterface::Execute_IBindToOnPurchaseButtonClicked(MenuReference, PurchaseButtonClickedDelegate);
 }
 
 void UVendorMenuWidgetController::CloseMenu()
@@ -43,12 +43,10 @@ void UVendorMenuWidgetController::CloseMenu()
 
 void UVendorMenuWidgetController::OnPurchaseButtonClicked()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, "Purchase Button Clicked");
 	// Handle purchase 
 }
 
 void UVendorMenuWidgetController::OnExitButtonClicked()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, "Exit Button Clicked");
 	CloseMenu();
 }

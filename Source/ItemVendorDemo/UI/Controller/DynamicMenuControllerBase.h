@@ -7,6 +7,9 @@
 #include "UObject/Object.h"
 #include "DynamicMenuControllerBase.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDynamicMenuClosed);
+
 /**
  * 
  */
@@ -20,9 +23,12 @@ public:
 
 	void SetOwnerPlayerController(APlayerController* InPlayerController);
 
+	UPROPERTY()
+	FOnDynamicMenuClosed OnDynamicMenuClosed;
+
 protected:
 	UPROPERTY()
-	TObjectPtr<UUserWidget> Menu;
+	TObjectPtr<UUserWidget> MenuReference = nullptr;
 
 	APlayerController* OwnerPlayerController = nullptr;
 

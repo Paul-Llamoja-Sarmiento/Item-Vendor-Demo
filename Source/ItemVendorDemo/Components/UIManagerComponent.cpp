@@ -14,6 +14,7 @@ UUIManagerComponent::UUIManagerComponent()
 }
 
 
+// TODO: Block if there is already an open menu
 void UUIManagerComponent::Client_OpenScreen_Implementation(const FUIScreenRecipe& Recipe, const FInstancedStruct& Payload)
 {
 	if (GetOwner()->GetLocalRole() != ROLE_AutonomousProxy)
@@ -32,8 +33,6 @@ void UUIManagerComponent::LoadAndCreateMenu(TSubclassOf<UDynamicMenuControllerBa
                                             TSubclassOf<UUserWidget> WidgetClass,
                                             const FInstancedStruct& Payload)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Loading Menu...");
-
 	if (ControllerClass == nullptr || WidgetClass == nullptr)
 	{
 		return;
@@ -41,6 +40,7 @@ void UUIManagerComponent::LoadAndCreateMenu(TSubclassOf<UDynamicMenuControllerBa
 
 	if (IsValid(CurrentOpenMenu) || IsValid(CurrentMenuController))
 	{
+		UE_LOG(LogTemp, Display, TEXT("Clean your previos objects!!!!"));
 		// TODO:
 		// Close the current menu if it exists
 	}
@@ -58,18 +58,34 @@ void UUIManagerComponent::LoadAndCreateMenu(TSubclassOf<UDynamicMenuControllerBa
 		return;
 	}
 
-	MenuController->SetOwnerPlayerController(PlayerController);
-	MenuController->InitializeMenu(NewMenu, Payload);
-
 	CurrentOpenMenu = NewMenu;
 	CurrentMenuController = MenuController;
 
-	NewMenu->AddToViewport();
+	CurrentMenuController->SetOwnerPlayerController(PlayerController);
+	CurrentMenuController->InitializeMenu(NewMenu, Payload);
+	CurrentMenuController->OnDynamicMenuClosed.AddDynamic(this, &UUIManagerComponent::OnCurrentMenuClosed);
+	
+
+	CurrentOpenMenu->AddToViewport();
 
 	// Set input mode to UI only
 	FInputModeGameAndUI InputMode;
 	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	InputMode.SetWidgetToFocus(NewMenu->TakeWidget());
+	InputMode.SetWidgetToFocus(CurrentOpenMenu->TakeWidget());
 	PlayerController->SetInputMode(InputMode);
 	PlayerController->bShowMouseCursor = true;
+}
+
+void UUIManagerComponent::OnCurrentMenuClosed()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetOwner());
+	if (!IsValid(PlayerController))
+	{
+		return;
+	}
+
+	PlayerController->SetInputMode(FInputModeGameOnly());
+	PlayerController->bShowMouseCursor = false;
+	CurrentMenuController = nullptr;
+	CurrentOpenMenu = nullptr;
 }

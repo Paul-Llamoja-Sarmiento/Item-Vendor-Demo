@@ -7,7 +7,7 @@
 
 void UDynamicMenuControllerBase::InitializeMenu(UUserWidget* InMenu, const FInstancedStruct& Payload)
 {
-	Menu = InMenu;
+	MenuReference = InMenu;
 	BindToMenuInterface();
 }
 
@@ -19,10 +19,11 @@ void UDynamicMenuControllerBase::SetOwnerPlayerController(APlayerController* InP
 void UDynamicMenuControllerBase::CloseMenu()
 {
 	ClearControllerBindings();
-	if (IsValid(Menu))
+	if (IsValid(MenuReference))
 	{
-		Menu->RemoveFromParent();	
+		MenuReference->RemoveFromParent();	
 	}
 
-	Menu = nullptr;
+	MenuReference = nullptr;
+	OnDynamicMenuClosed.Broadcast();
 }
