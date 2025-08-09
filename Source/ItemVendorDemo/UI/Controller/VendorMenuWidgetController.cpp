@@ -6,33 +6,33 @@
 #include "Blueprint/UserWidget.h"
 
 
-void UVendorMenuWidgetController::InitializeMenu(UUserWidget* InMenu)
+void UVendorMenuWidgetController::InitializeMenu(UUserWidget* InMenu, const FInstancedStruct& Payload)
 {
 	check(InMenu->GetClass()->ImplementsInterface(UVendorWidgetInterface::StaticClass()));
 	
-	Super::InitializeMenu(InMenu);
+	Super::InitializeMenu(InMenu, Payload);
 }
 
 void UVendorMenuWidgetController::ClearControllerBindings()
 {
 	if (ExitButtonClickedDelegate.IsBound())
 	{
-		IVendorWidgetInterface::Execute_IUnbindFromOnExitButtonClicked(this, ExitButtonClickedDelegate);
+		IVendorWidgetInterface::Execute_IUnbindFromOnExitButtonClicked(Menu, ExitButtonClickedDelegate);
 	}
 
 	if (PurchaseButtonClickedDelegate.IsBound())
 	{
-		IVendorWidgetInterface::Execute_IUnbindFromOnPurchaseButtonClicked(this, PurchaseButtonClickedDelegate);
+		IVendorWidgetInterface::Execute_IUnbindFromOnPurchaseButtonClicked(Menu, PurchaseButtonClickedDelegate);
 	}
 }
 
 void UVendorMenuWidgetController::BindToMenuInterface()
 {
 	ExitButtonClickedDelegate.BindDynamic(this, &UVendorMenuWidgetController::OnExitButtonClicked);
-	IVendorWidgetInterface::Execute_IBindToOnExitButtonClicked(this, ExitButtonClickedDelegate);
+	IVendorWidgetInterface::Execute_IBindToOnExitButtonClicked(Menu, ExitButtonClickedDelegate);
 
 	PurchaseButtonClickedDelegate.BindDynamic(this, &UVendorMenuWidgetController::OnPurchaseButtonClicked);
-	IVendorWidgetInterface::Execute_IBindToOnPurchaseButtonClicked(this, PurchaseButtonClickedDelegate);
+	IVendorWidgetInterface::Execute_IBindToOnPurchaseButtonClicked(Menu, PurchaseButtonClickedDelegate);
 }
 
 void UVendorMenuWidgetController::CloseMenu()

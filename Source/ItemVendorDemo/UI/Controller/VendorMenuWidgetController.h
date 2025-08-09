@@ -7,6 +7,17 @@
 #include "ItemVendorDemo/Interfaces/VendorWidgetInterface.h"
 #include "VendorMenuWidgetController.generated.h"
 
+
+USTRUCT(BlueprintType)
+struct FVendorScreenPayload
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadWrite)
+	FPrimaryAssetId VendorId = FPrimaryAssetId();
+};
+
+
 /**
  * 
  */
@@ -17,7 +28,7 @@ class ITEMVENDORDEMO_API UVendorMenuWidgetController : public UDynamicMenuContro
 
 public:
 	/* DynamicMenuControllerBase */
-	virtual void InitializeMenu(UUserWidget* InMenu) override;
+	virtual void InitializeMenu(UUserWidget* InMenu, const FInstancedStruct& Payload) override;
 
 protected:
 	FOnPurchaseButtonClicked PurchaseButtonClickedDelegate;

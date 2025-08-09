@@ -5,10 +5,15 @@
 
 #include "Blueprint/UserWidget.h"
 
-void UDynamicMenuControllerBase::InitializeMenu(UUserWidget* InMenu)
+void UDynamicMenuControllerBase::InitializeMenu(UUserWidget* InMenu, const FInstancedStruct& Payload)
 {
 	Menu = InMenu;
 	BindToMenuInterface();
+}
+
+void UDynamicMenuControllerBase::SetOwnerPlayerController(APlayerController* InPlayerController)
+{
+	OwnerPlayerController = InPlayerController;
 }
 
 void UDynamicMenuControllerBase::CloseMenu()

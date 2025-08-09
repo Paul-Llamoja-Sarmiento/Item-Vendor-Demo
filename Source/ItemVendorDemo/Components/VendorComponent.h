@@ -8,6 +8,9 @@
 #include "VendorComponent.generated.h"
 
 
+
+
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ITEMVENDORDEMO_API UVendorComponent : public UActorComponent
 {

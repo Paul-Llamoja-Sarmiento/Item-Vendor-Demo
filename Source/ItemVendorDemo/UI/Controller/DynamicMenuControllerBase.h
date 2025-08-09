@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InstancedStruct.h"
 #include "UObject/Object.h"
 #include "DynamicMenuControllerBase.generated.h"
 
@@ -15,11 +16,15 @@ class ITEMVENDORDEMO_API UDynamicMenuControllerBase : public UObject
 	GENERATED_BODY()
 
 public:
-	virtual void InitializeMenu(UUserWidget* InMenu);
+	virtual void InitializeMenu(UUserWidget* InMenu, const FInstancedStruct& Payload);
+
+	void SetOwnerPlayerController(APlayerController* InPlayerController);
 
 protected:
 	UPROPERTY()
 	TObjectPtr<UUserWidget> Menu;
+
+	APlayerController* OwnerPlayerController = nullptr;
 
 	virtual void BindToMenuInterface() { }
 
