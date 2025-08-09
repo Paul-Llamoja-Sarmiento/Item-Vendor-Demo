@@ -6,6 +6,26 @@
 #include "UObject/Interface.h"
 #include "VendorWidgetInterface.generated.h"
 
+
+USTRUCT(BlueprintType)
+struct FVendorViewData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FText DisplayName = FText();
+
+	UPROPERTY(BlueprintReadWrite)
+	FText Description = FText();
+	
+	UPROPERTY(BlueprintReadWrite)
+	UTexture2D* IconTexture = nullptr;
+	
+	UPROPERTY(BlueprintReadWrite)
+	int32 BasePrice = 0;
+};
+
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPurchaseButtonClickedInternal);
 DECLARE_DYNAMIC_DELEGATE(FOnPurchaseButtonClicked);
 
@@ -44,4 +64,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void IUnbindFromOnExitButtonClicked(const FOnExitButtonClicked& Event);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ISetVendorData(const TArray<FVendorViewData>& VendorData);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void IShowLoadingScreen(bool bShow);
 };

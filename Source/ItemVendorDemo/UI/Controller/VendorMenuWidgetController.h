@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "DynamicMenuControllerBase.h"
+#include "Engine/StreamableManager.h"
+#include "ItemVendorDemo/Definitions/VendorDefinition.h"
 #include "ItemVendorDemo/Interfaces/VendorWidgetInterface.h"
 #include "VendorMenuWidgetController.generated.h"
 
@@ -30,6 +32,8 @@ public:
 	/* DynamicMenuControllerBase */
 	virtual void InitializeMenu(UUserWidget* InMenu, const FInstancedStruct& Payload) override;
 
+	virtual void BeginDestroy() override;
+
 protected:
 	FOnPurchaseButtonClicked PurchaseButtonClickedDelegate;
 	
@@ -42,6 +46,20 @@ protected:
 	virtual void CloseMenu() override;
 
 private:
+	UPROPERTY()
+	FPrimaryAssetId CurrentVendorId;
+
+	TArray<TSharedPtr<FStreamableHandle>> PendingAssetLoads;
+	
+	void ApplyMenuPayload(const FInstancedStruct& Payload);
+
+	void OpenVendorMenu(const FPrimaryAssetId& VendorId);
+
+	void LoadItemsForVendor(const FPrimaryAssetId& VendorId);
+
+	void PushViewDataToMenu(const UVendorDefinition& VendorDefinition);
+
+	void ShowLoadingScreen(bool bShow) const;
 	
 	UFUNCTION()
 	void OnPurchaseButtonClicked();

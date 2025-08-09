@@ -25,7 +25,7 @@ public:
 	UTexture2D* IconTexture = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Item|Shop")
-	int32 BasePrice = 10;
+	int32 BasePrice = 0;
 	
 	// virtual FPrimaryAssetId GetPrimaryAssetId() const override
 	// {
