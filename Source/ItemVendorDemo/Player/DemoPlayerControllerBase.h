@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "DemoPlayerControllerBase.generated.h"
 
+class UPlayerTransactionComponent;
 /**
  * 
  */
@@ -13,4 +14,11 @@ UCLASS(Abstract)
 class ITEMVENDORDEMO_API ADemoPlayerControllerBase : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	ADemoPlayerControllerBase();
+
+protected:
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPlayerTransactionComponent> VendorInteractionComponent;
 };

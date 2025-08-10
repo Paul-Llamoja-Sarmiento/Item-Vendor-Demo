@@ -12,31 +12,22 @@ UPlayerWalletComponent::UPlayerWalletComponent()
 	SetIsReplicatedByDefault(true);
 }
 
-void UPlayerWalletComponent::Server_SpendMoney_Implementation(int32 Amount)
+bool UPlayerWalletComponent::TrySpendMoney(int32 Amount)
 {
-	if (Amount > 0)
-	{
-		TrySpendMoneyInternal(Amount);
-	}
+	return TrySpendMoneyInternal(Amount);
 }
 
-void UPlayerWalletComponent::Server_AddMoney_Implementation(int32 Amount)
+bool UPlayerWalletComponent::TryAddMoney(int32 Amount)
 {
-	if (Amount > 0)
-	{
-		AddMoneyInternal(Amount);
-	}
+	return TryAddMoneyInternal(Amount);
 }
 
 
 void UPlayerWalletComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (!DoesOwnerHaveAuthority())
-	{
-		Server_AddMoney(InitialMoney);
-	}
+	
+	TryAddMoney(InitialMoney);
 }
 
 void UPlayerWalletComponent::OnRep_CurrentMoney()
@@ -45,24 +36,26 @@ void UPlayerWalletComponent::OnRep_CurrentMoney()
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("PWC Client: Current Money: %d for PlayerState: %s"), CurrentMoney, *GetOwner()->GetName()));
 }
 
-void UPlayerWalletComponent::TrySpendMoneyInternal(int32 Amount)
+bool UPlayerWalletComponent::TrySpendMoneyInternal(int32 Amount)
 {
 	if (!DoesOwnerHaveAuthority() || CurrentMoney < Amount || Amount <= 0)
 	{
-		return;
+		return false;
 	}
 
 	CurrentMoney -= Amount;
+	return true;
 }
 
-void UPlayerWalletComponent::AddMoneyInternal(int32 Amount)
+bool UPlayerWalletComponent::TryAddMoneyInternal(int32 Amount)
 {
-	if (!DoesOwnerHaveAuthority())
+	if (!DoesOwnerHaveAuthority() || Amount <= 0)
 	{
-		return;
+		return false;
 	}
 
 	CurrentMoney += Amount;
+	return true;
 }
 
 bool UPlayerWalletComponent::DoesOwnerHaveAuthority() const

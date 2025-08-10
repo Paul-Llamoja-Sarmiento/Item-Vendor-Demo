@@ -14,12 +14,10 @@ class ITEMVENDORDEMO_API UPlayerWalletComponent : public UActorComponent
 
 public:	
 	UPlayerWalletComponent();
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_SpendMoney(int32 Amount);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_AddMoney(int32 Amount);
+	
+	bool TrySpendMoney(int32 Amount);
+	
+	bool TryAddMoney(int32 Amount);
 	
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -37,9 +35,9 @@ private:
 	UFUNCTION()
 	void OnRep_CurrentMoney();
 
-	void TrySpendMoneyInternal(int32 Amount);
+	bool TrySpendMoneyInternal(int32 Amount);
 
-	void AddMoneyInternal(int32 Amount);
+	bool TryAddMoneyInternal(int32 Amount);
 
 	bool DoesOwnerHaveAuthority() const;
 };

@@ -4,6 +4,7 @@
 #include "UIManagerComponent.h"
 
 #include "Blueprint/UserWidget.h"
+#include "Engine/AssetManager.h"
 #include "ItemVendorDemo/UI/Controller/DynamicMenuControllerBase.h"
 
 
@@ -29,8 +30,13 @@ void UUIManagerComponent::Client_OpenScreen_Implementation(const FUIScreenRecipe
 
 }
 
+void UUIManagerComponent::Server_NotifyMenuClosed_Implementation(APlayerController* InteractorController)
+{
+	OnMenuClosed.Broadcast(InteractorController);
+}
+
 void UUIManagerComponent::LoadAndCreateMenu(TSubclassOf<UDynamicMenuControllerBase> ControllerClass,
-                                            TSubclassOf<UUserWidget> WidgetClass,
+                                            const TSoftClassPtr<UUserWidget>& WidgetClass,
                                             const FInstancedStruct& Payload)
 {
 	if (ControllerClass == nullptr || WidgetClass == nullptr)
@@ -38,42 +44,55 @@ void UUIManagerComponent::LoadAndCreateMenu(TSubclassOf<UDynamicMenuControllerBa
 		return;
 	}
 
-	if (IsValid(CurrentOpenMenu) || IsValid(CurrentMenuController))
-	{
-		UE_LOG(LogTemp, Display, TEXT("Clean your previos objects!!!!"));
-		// TODO:
-		// Close the current menu if it exists
-	}
+	const FSoftObjectPath WidgetPath = WidgetClass.ToSoftObjectPath();
+	const UAssetManager& AssetManager = UAssetManager::Get();
+	AssetManager.GetStreamableManager().RequestAsyncLoad(WidgetPath, FStreamableDelegate::CreateWeakLambda(this, 
+		[this, ControllerClass, WidgetClass, Payload]()
+		{
+			UClass* ResolvedWidgetClass = WidgetClass.Get();
+			if (ResolvedWidgetClass == nullptr)
+			{
+				return;
+			}
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetOwner());
-	if (!IsValid(PlayerController))
-	{
-		return;
-	}
+			if (IsValid(CurrentOpenMenu) || IsValid(CurrentMenuController))
+			{
+				UE_LOG(LogTemp, Display, TEXT("Clean your previos objects!!!!"));
+				// TODO:
+				// Close the current menu if it exists
+			}
 
-	UUserWidget* NewMenu = CreateWidget<UUserWidget>(PlayerController, WidgetClass);
-	UDynamicMenuControllerBase* MenuController = NewObject<UDynamicMenuControllerBase>(this, ControllerClass);
-	if (!IsValid(NewMenu) || !IsValid(MenuController))
-	{
-		return;
-	}
+			APlayerController* PlayerController = Cast<APlayerController>(GetOwner());
+			if (!IsValid(PlayerController))
+			{
+				return;
+			}
 
-	CurrentOpenMenu = NewMenu;
-	CurrentMenuController = MenuController;
+			UUserWidget* NewMenu = CreateWidget<UUserWidget>(PlayerController, ResolvedWidgetClass);
+			UDynamicMenuControllerBase* MenuController = NewObject<UDynamicMenuControllerBase>(this, ControllerClass);
+			if (!IsValid(NewMenu) || !IsValid(MenuController))
+			{
+				return;
+			}
 
-	CurrentMenuController->SetOwnerPlayerController(PlayerController);
-	CurrentMenuController->InitializeMenu(NewMenu, Payload);
-	CurrentMenuController->OnDynamicMenuClosed.AddDynamic(this, &UUIManagerComponent::OnCurrentMenuClosed);
-	
+			CurrentOpenMenu = NewMenu;
+			CurrentMenuController = MenuController;
 
-	CurrentOpenMenu->AddToViewport();
+			CurrentMenuController->SetOwnerPlayerController(PlayerController);
+			CurrentMenuController->InitializeMenu(NewMenu, Payload);
+			CurrentMenuController->OnDynamicMenuClosed.AddDynamic(this, &UUIManagerComponent::OnCurrentMenuClosed);
+			
 
-	// Set input mode to UI only
-	FInputModeGameAndUI InputMode;
-	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	InputMode.SetWidgetToFocus(CurrentOpenMenu->TakeWidget());
-	PlayerController->SetInputMode(InputMode);
-	PlayerController->bShowMouseCursor = true;
+			CurrentOpenMenu->AddToViewport();
+
+			// Set input mode to UI only
+			FInputModeGameAndUI InputMode;
+			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			InputMode.SetWidgetToFocus(CurrentOpenMenu->TakeWidget());
+			PlayerController->SetInputMode(InputMode);
+			PlayerController->bShowMouseCursor = true;
+		}
+	));
 }
 
 void UUIManagerComponent::OnCurrentMenuClosed()
@@ -88,4 +107,6 @@ void UUIManagerComponent::OnCurrentMenuClosed()
 	PlayerController->bShowMouseCursor = false;
 	CurrentMenuController = nullptr;
 	CurrentOpenMenu = nullptr;
+	OnMenuClosed.Broadcast(PlayerController);
+	Server_NotifyMenuClosed(PlayerController);
 }

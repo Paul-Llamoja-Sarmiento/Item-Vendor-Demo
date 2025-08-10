@@ -17,6 +17,9 @@ struct FVendorScreenPayload
 	
 	UPROPERTY(BlueprintReadWrite)
 	FPrimaryAssetId VendorId = FPrimaryAssetId();
+
+	UPROPERTY(BlueprintReadWrite)
+	TWeakObjectPtr<AActor> VendorActor = nullptr;
 };
 
 
@@ -49,9 +52,12 @@ private:
 	UPROPERTY()
 	FPrimaryAssetId CurrentVendorId;
 
+	UPROPERTY()
+	TWeakObjectPtr<AActor> CurrentVendorActor = nullptr;
+
 	TArray<TSharedPtr<FStreamableHandle>> PendingAssetLoads;
 	
-	void ApplyMenuPayload(const FInstancedStruct& Payload);
+	void ResolveMenuPayload(const FInstancedStruct& Payload);
 
 	void OpenVendorMenu(const FPrimaryAssetId& VendorId);
 
@@ -60,6 +66,8 @@ private:
 	void PushViewDataToMenu(const UVendorDefinition& VendorDefinition);
 
 	void ShowLoadingScreen(bool bShow) const;
+
+	void CleanPendingAssetLoads();
 	
 	UFUNCTION()
 	void OnPurchaseButtonClicked();

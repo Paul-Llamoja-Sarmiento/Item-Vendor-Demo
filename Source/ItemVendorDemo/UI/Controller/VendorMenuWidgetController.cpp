@@ -14,20 +14,12 @@ void UVendorMenuWidgetController::InitializeMenu(UUserWidget* InMenu, const FIns
 	
 	Super::InitializeMenu(InMenu, Payload);
 
-	ApplyMenuPayload(Payload);
+	ResolveMenuPayload(Payload);
 }
 
 void UVendorMenuWidgetController::BeginDestroy()
 {
-	for (const auto& Handle : PendingAssetLoads)
-	{
-		if (Handle.IsValid())
-		{
-			Handle->CancelHandle();
-		}
-	}
-	
-	PendingAssetLoads.Empty();
+	CleanPendingAssetLoads();
 	
 	Super::BeginDestroy();
 }
@@ -56,11 +48,11 @@ void UVendorMenuWidgetController::BindToMenuInterface()
 
 void UVendorMenuWidgetController::CloseMenu()
 {
-	// Remove the menu from viewport
+	CleanPendingAssetLoads();
 	Super::CloseMenu();
 }
 
-void UVendorMenuWidgetController::ApplyMenuPayload(const FInstancedStruct& Payload)
+void UVendorMenuWidgetController::ResolveMenuPayload(const FInstancedStruct& Payload)
 {
 	if (!Payload.IsValid() || !Payload.GetScriptStruct()->IsChildOf(FVendorScreenPayload::StaticStruct()))
 	{
@@ -68,6 +60,7 @@ void UVendorMenuWidgetController::ApplyMenuPayload(const FInstancedStruct& Paylo
 	}
 
 	const FVendorScreenPayload& VendorPayload = Payload.Get<FVendorScreenPayload>();
+	CurrentVendorActor = VendorPayload.VendorActor;
 	OpenVendorMenu(VendorPayload.VendorId);
 }
 
@@ -167,6 +160,19 @@ void UVendorMenuWidgetController::ShowLoadingScreen(bool bShow) const
 	{
 		IVendorWidgetInterface::Execute_IShowLoadingScreen(MenuReference, bShow);
 	}
+}
+
+void UVendorMenuWidgetController::CleanPendingAssetLoads()
+{
+	for (const auto& Handle : PendingAssetLoads)
+	{
+		if (Handle.IsValid())
+		{
+			Handle->CancelHandle();
+		}
+	}
+	
+	PendingAssetLoads.Empty();
 }
 
 

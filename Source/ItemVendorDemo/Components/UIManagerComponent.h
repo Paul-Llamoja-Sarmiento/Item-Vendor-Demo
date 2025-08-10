@@ -8,6 +8,9 @@
 #include "Components/ActorComponent.h"
 #include "UIManagerComponent.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMenuClosed,APlayerController*, InteractorController);
+
 class UDynamicMenuControllerBase;
 
 
@@ -20,7 +23,7 @@ struct FUIScreenRecipe
 	FGameplayTag UIMenuTag = FGameplayTag();
 
 	UPROPERTY(BlueprintReadWrite)
-	TSubclassOf<UUserWidget> WidgetClass = nullptr;
+	TSoftClassPtr<UUserWidget> WidgetClass = nullptr;
 };
 
 
@@ -32,12 +35,18 @@ class ITEMVENDORDEMO_API UUIManagerComponent : public UActorComponent
 public:
 	UUIManagerComponent();
 
+	UPROPERTY(BlueprintAssignable)
+	FOnMenuClosed OnMenuClosed;
+
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_OpenScreen(const FUIScreenRecipe& Recipe, const FInstancedStruct& Payload);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="UI")
 	TMap<FGameplayTag, TSubclassOf<UDynamicMenuControllerBase>> MenuControllersRegistry;
+
+	UFUNCTION(Server, Reliable)
+	void Server_NotifyMenuClosed(APlayerController* InteractorController);
 
 private:
 	UPROPERTY()
@@ -47,7 +56,7 @@ private:
 	TObjectPtr<UDynamicMenuControllerBase> CurrentMenuController = nullptr;
 
 	void LoadAndCreateMenu(TSubclassOf<UDynamicMenuControllerBase> ControllerClass,
-	                       TSubclassOf<UUserWidget> WidgetClass,
+	                       const TSoftClassPtr<UUserWidget>& WidgetClass,
 	                       const FInstancedStruct& Payload);
 
 	UFUNCTION()

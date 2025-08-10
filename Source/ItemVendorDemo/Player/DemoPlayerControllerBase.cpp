@@ -2,3 +2,10 @@
 
 
 #include "DemoPlayerControllerBase.h"
+
+#include "ItemVendorDemo/Components/PlayerTransactionComponent.h"
+
+ADemoPlayerControllerBase::ADemoPlayerControllerBase()
+{
+	VendorInteractionComponent = CreateDefaultSubobject<UPlayerTransactionComponent>(TEXT("VendorInteractionComponent"));
+}
