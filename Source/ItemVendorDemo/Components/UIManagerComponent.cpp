@@ -86,7 +86,7 @@ void UUIManagerComponent::LoadAndCreateMenu(TSubclassOf<UDynamicMenuControllerBa
 			CurrentOpenMenu->AddToViewport();
 
 			// Set input mode to UI only
-			FInputModeGameAndUI InputMode;
+			FInputModeUIOnly InputMode;
 			InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 			InputMode.SetWidgetToFocus(CurrentOpenMenu->TakeWidget());
 			PlayerController->SetInputMode(InputMode);
