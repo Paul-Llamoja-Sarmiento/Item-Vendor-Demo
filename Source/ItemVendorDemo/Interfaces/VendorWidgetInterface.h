@@ -13,6 +13,9 @@ struct FVendorViewData
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
+	FPrimaryAssetId ItemId = FPrimaryAssetId();
+
+	UPROPERTY(BlueprintReadWrite)
 	FText DisplayName = FText();
 
 	UPROPERTY(BlueprintReadWrite)
@@ -26,8 +29,8 @@ struct FVendorViewData
 };
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPurchaseButtonClickedInternal);
-DECLARE_DYNAMIC_DELEGATE(FOnPurchaseButtonClicked);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnPurchaseButtonClickedInternal, FPrimaryAssetId, ItemId, int32, Quantity);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnPurchaseButtonClicked, FPrimaryAssetId, ItemId, int32, Quantity);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExitButtonClickedInternal);
 DECLARE_DYNAMIC_DELEGATE(FOnExitButtonClicked);

@@ -20,7 +20,7 @@ class ITEMVENDORDEMO_API UVendorComponent : public UActorComponent
 public:
 	UVendorComponent();
 
-	bool MakeQuote(const FPrimaryAssetId& ItemId, int32 Quantity, int32& UnitPrice, int32& TotalPrice) const;
+	bool MakeQuote(const FPrimaryAssetId& ItemId, int32 Quantity, int32& OutUnitPrice, int32& OutTotalPrice) const;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
@@ -55,4 +55,6 @@ private:
 	void OnMenuClosedForPlayer(APlayerController* InteractorController);
 
 	void ClearBindings();
+
+	bool ResolveUnitPrice(const FPrimaryAssetId& ItemId, int32 PriceOverride, int32& OutUnitPrice) const;
 };

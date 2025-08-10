@@ -8,6 +8,7 @@
 #include "ItemVendorDemo/UI/Controller/VendorMenuWidgetController.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/AssetManager.h"
+#include "ItemVendorDemo/Definitions/ItemDefinition/ItemBaseDefinition.h"
 
 
 UVendorComponent::UVendorComponent()
@@ -16,9 +17,29 @@ UVendorComponent::UVendorComponent()
 	SetIsReplicatedByDefault(true);
 }
 
-bool UVendorComponent::MakeQuote(const FPrimaryAssetId& ItemId, int32 Quantity, int32& UnitPrice,
-                                 int32& TotalPrice) const
+bool UVendorComponent::MakeQuote(const FPrimaryAssetId& ItemId, int32 Quantity, int32& OutUnitPrice,
+                                 int32& OutTotalPrice) const
 {
+	if (!IsServer() || LoadedVendorDefinition == nullptr || Quantity <= 0 || !ItemId.IsValid())
+	{
+		return false;
+	}
+	const auto* Found = LoadedVendorDefinition->Inventory.FindByPredicate(
+		[&ItemId](const FVendorItemRef& Ref) { return Ref.ItemId == ItemId; });
+
+	if (Found == nullptr)
+	{
+		return false;
+	}
+
+	int UnitPriceFound = 0;
+	if (!ResolveUnitPrice(ItemId, Found->PriceOverride, UnitPriceFound))
+	{
+		return false;
+	}
+
+	OutUnitPrice = UnitPriceFound;
+	OutTotalPrice = UnitPriceFound * Quantity;	
 	return true;
 }
 
@@ -156,4 +177,35 @@ void UVendorComponent::ClearBindings()
 	}
 
 	CurrentInteractors.Empty();
+}
+
+bool UVendorComponent::ResolveUnitPrice(const FPrimaryAssetId& ItemId, int32 PriceOverride, int32& OutUnitPrice) const
+{
+	if (!IsServer())
+	{
+		return false;
+	}
+
+	if (PriceOverride >= 0)
+	{
+		OutUnitPrice = PriceOverride;
+		return true;
+	}
+
+	const UAssetManager& AssetManager = UAssetManager::Get();
+	UObject* Obj = AssetManager.GetPrimaryAssetObject(ItemId);
+	if (Obj == nullptr)
+	{
+		const FSoftObjectPath Path = AssetManager.GetPrimaryAssetPath(ItemId);
+		Obj = Path.TryLoad();
+	}
+
+	const UItemBaseDefinition* ItemDefinition = Cast<UItemBaseDefinition>(Obj);
+	if (ItemDefinition == nullptr)
+	{
+		return false;
+	}
+
+	OutUnitPrice = ItemDefinition->BasePrice;
+	return true;
 }

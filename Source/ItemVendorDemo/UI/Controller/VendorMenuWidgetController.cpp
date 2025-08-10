@@ -5,6 +5,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Engine/AssetManager.h"
+#include "ItemVendorDemo/Components/PlayerTransactionComponent.h"
 #include "ItemVendorDemo/Definitions/ItemDefinition/ItemBaseDefinition.h"
 
 
@@ -48,6 +49,7 @@ void UVendorMenuWidgetController::BindToMenuInterface()
 
 void UVendorMenuWidgetController::CloseMenu()
 {
+	CurrentVendorActor = nullptr;
 	CleanPendingAssetLoads();
 	Super::CloseMenu();
 }
@@ -66,11 +68,10 @@ void UVendorMenuWidgetController::ResolveMenuPayload(const FInstancedStruct& Pay
 
 void UVendorMenuWidgetController::OpenVendorMenu(const FPrimaryAssetId& VendorId)
 {
-	CurrentVendorId = VendorId;
 	ShowLoadingScreen(true);
 
 	const UAssetManager& AssetManager = UAssetManager::Get();
-	const FSoftObjectPath VendorPath = AssetManager.GetPrimaryAssetPath(CurrentVendorId);
+	const FSoftObjectPath VendorPath = AssetManager.GetPrimaryAssetPath(VendorId);
 	TSharedPtr<FStreamableHandle> Handle = AssetManager.GetStreamableManager().RequestAsyncLoad(
 		VendorPath, FStreamableDelegate::CreateWeakLambda(this, [this, VendorId]()
 		{
@@ -143,6 +144,7 @@ void UVendorMenuWidgetController::PushViewDataToMenu(const UVendorDefinition& Ve
 		}
 
 		FVendorViewData ViewData;
+		ViewData.ItemId = ItemRef.ItemId;
 		ViewData.DisplayName = ItemDefinition->DisplayName;
 		ViewData.Description = ItemDefinition->Description;
 		ViewData.IconTexture = ItemDefinition->IconTexture;
@@ -176,9 +178,13 @@ void UVendorMenuWidgetController::CleanPendingAssetLoads()
 }
 
 
-void UVendorMenuWidgetController::OnPurchaseButtonClicked()
+void UVendorMenuWidgetController::OnPurchaseButtonClicked(FPrimaryAssetId ItemId, int32 Quantity)
 {
-	// Handle purchase 
+	if (OwnerPlayerController != nullptr && ItemId.IsValid())
+	{
+		UPlayerTransactionComponent* TransactionComponent = OwnerPlayerController->FindComponentByClass<UPlayerTransactionComponent>();
+		TransactionComponent->Server_RequestPurchase(CurrentVendorActor.Get(), ItemId, Quantity);
+	}
 }
 
 void UVendorMenuWidgetController::OnExitButtonClicked()

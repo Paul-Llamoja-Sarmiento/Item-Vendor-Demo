@@ -25,5 +25,6 @@ void UDynamicMenuControllerBase::CloseMenu()
 	}
 
 	MenuReference = nullptr;
+	OwnerPlayerController = nullptr;
 	OnDynamicMenuClosed.Broadcast();
 }

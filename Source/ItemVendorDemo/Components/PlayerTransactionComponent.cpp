@@ -14,8 +14,14 @@ UPlayerTransactionComponent::UPlayerTransactionComponent()
 	SetIsReplicatedByDefault(true);
 }
 
-void UPlayerTransactionComponent::Server_RequestPurchase_Implementation(AActor* VendorActor, FPrimaryAssetId ItemId, int32 Quantity)
+void UPlayerTransactionComponent::Server_RequestPurchase_Implementation(AActor* VendorActor, const FPrimaryAssetId& ItemId, int32 Quantity)
 {
+	if (!ItemId.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("RequestPurchase_Implementation: Invalid ItemId"));
+		return;
+	}
+	
 	FPurchaseResult Result;
 	Result.ItemId = ItemId;
 	Result.Quantity = Quantity;
@@ -59,6 +65,7 @@ void UPlayerTransactionComponent::Server_RequestPurchase_Implementation(AActor* 
 
 void UPlayerTransactionComponent::Client_PurchaseResult_Implementation(const FPurchaseResult& Result)
 {
+	UE_LOG(LogTemp, Display, TEXT("Client_PurchaseResult_Implementation"));
 }
 
 void UPlayerTransactionComponent::BeginPlay()

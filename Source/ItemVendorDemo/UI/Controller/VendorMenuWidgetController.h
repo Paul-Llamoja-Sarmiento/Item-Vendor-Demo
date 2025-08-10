@@ -50,9 +50,6 @@ protected:
 
 private:
 	UPROPERTY()
-	FPrimaryAssetId CurrentVendorId;
-
-	UPROPERTY()
 	TWeakObjectPtr<AActor> CurrentVendorActor = nullptr;
 
 	TArray<TSharedPtr<FStreamableHandle>> PendingAssetLoads;
@@ -70,7 +67,7 @@ private:
 	void CleanPendingAssetLoads();
 	
 	UFUNCTION()
-	void OnPurchaseButtonClicked();
+	void OnPurchaseButtonClicked(FPrimaryAssetId ItemId, int32 Quantity);
 
 	UFUNCTION()
 	void OnExitButtonClicked();

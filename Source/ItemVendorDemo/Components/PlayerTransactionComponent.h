@@ -39,7 +39,7 @@ public:
 	UPlayerTransactionComponent();
 
 	UFUNCTION(Server, Reliable)
-	void Server_RequestPurchase(AActor* VendorActor, FPrimaryAssetId ItemId, int32 Quantity);
+	void Server_RequestPurchase(AActor* VendorActor, const FPrimaryAssetId& ItemId, int32 Quantity);
 
 	UFUNCTION(Client, Reliable)
 	void Client_PurchaseResult(const FPurchaseResult& Result);
