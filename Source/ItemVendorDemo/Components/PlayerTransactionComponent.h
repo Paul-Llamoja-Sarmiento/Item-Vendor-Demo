@@ -60,6 +60,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UNiagaraSystem> PurchaseEffect;
 
+	UNiagaraComponent* CurrentPurchaseEffect;
+
 	FTimerHandle PurchaseTimerHandle;
 	
 	virtual void BeginPlay() override;

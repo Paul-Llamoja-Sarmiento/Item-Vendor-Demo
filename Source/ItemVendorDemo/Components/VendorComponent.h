@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "Engine/StreamableManager.h"
+#include "ItemVendorDemo/DemoGameplayTags.h"
 #include "VendorComponent.generated.h"
 
 
@@ -25,11 +26,11 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Vendor|Configuration")
+	UPROPERTY(EditAnywhere, Category = "Vendor|Configuration")
 	TSoftObjectPtr<UVendorDefinition> VendorDefinition;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Vendor|Configuration")
-	FGameplayTag InteractiveMenuTag;
+	UPROPERTY(EditAnywhere, Category = "Vendor|Configuration")
+	FGameplayTag InteractiveMenuTag = UI_Menu_Vendor;
 
 	UFUNCTION(BlueprintCallable)
 	void OpenForPlayer(APlayerController* InteractorController);

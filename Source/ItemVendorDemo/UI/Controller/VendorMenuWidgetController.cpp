@@ -152,12 +152,13 @@ void UVendorMenuWidgetController::PushViewDataToMenu(const UVendorDefinition& Ve
 		VendorViewData.Add(MoveTemp(ViewData));
 	}
 
-	IVendorWidgetInterface::Execute_ISetVendorData(MenuReference, VendorViewData);
+	IVendorWidgetInterface::Execute_ISetVendorData(MenuReference, VendorDefinition.VendorName, VendorViewData);
 	ShowLoadingScreen(false);
 }
 
 void UVendorMenuWidgetController::ShowLoadingScreen(bool bShow) const
 {
+	// TODO: Implement a loading screen implementation in the Vendor Widget
 	if (MenuReference != nullptr)
 	{
 		IVendorWidgetInterface::Execute_IShowLoadingScreen(MenuReference, bShow);

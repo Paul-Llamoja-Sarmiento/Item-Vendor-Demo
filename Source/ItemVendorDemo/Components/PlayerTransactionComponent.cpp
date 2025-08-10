@@ -89,12 +89,21 @@ void UPlayerTransactionComponent::Client_PurchaseResult_Implementation(const FPu
 	{
 		FVector SpawnLocation = ControlledPawn->GetActorLocation();
 		SpawnLocation.Z += 50.0f;
-		UNiagaraComponent* PurchaseEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), PurchaseEffect, SpawnLocation);
-		GetWorld()->GetTimerManager().SetTimer(PurchaseTimerHandle, [this, PurchaseEffectInstance]()
+		
+		if (CurrentPurchaseEffect != nullptr)
 		{
-			if (IsValid(PurchaseEffectInstance))
+			CurrentPurchaseEffect->DestroyComponent();
+			CurrentPurchaseEffect = nullptr;
+			PurchaseTimerHandle.Invalidate();
+		}
+		
+		CurrentPurchaseEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), PurchaseEffect, SpawnLocation);
+		GetWorld()->GetTimerManager().SetTimer(PurchaseTimerHandle, [this]()
+		{
+			if (IsValid(CurrentPurchaseEffect))
 			{
-				PurchaseEffectInstance->DestroyComponent();
+				CurrentPurchaseEffect->DestroyComponent();
+				CurrentPurchaseEffect = nullptr;
 			}
 		}, 1.0f, false);
 	}

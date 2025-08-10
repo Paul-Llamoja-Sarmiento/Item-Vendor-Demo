@@ -69,7 +69,7 @@ public:
 	void IUnbindFromOnExitButtonClicked(const FOnExitButtonClicked& Event);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void ISetVendorData(const TArray<FVendorViewData>& VendorData);
+	void ISetVendorData(const FText& VendorName, const TArray<FVendorViewData>& VendorData);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void IShowLoadingScreen(bool bShow);

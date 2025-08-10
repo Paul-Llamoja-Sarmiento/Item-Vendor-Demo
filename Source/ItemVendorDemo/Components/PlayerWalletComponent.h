@@ -18,6 +18,9 @@ public:
 	bool TrySpendMoney(int32 Amount);
 	
 	bool TryAddMoney(int32 Amount);
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetMoneyAmount() const { return CurrentMoney; }
 	
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
