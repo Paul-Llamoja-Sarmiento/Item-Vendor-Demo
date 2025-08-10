@@ -136,6 +136,9 @@ public:
 	bool RemoveItem(const FPrimaryAssetId& ItemId, int32 Quantity);
 
 	int32 GetQuantity(const FPrimaryAssetId& ItemId) const;
+
+	UFUNCTION(BlueprintCallable)
+	void DebugPrintInventory(bool bToScreen) const;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
