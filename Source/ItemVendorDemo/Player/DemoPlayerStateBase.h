@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerState.h"
 #include "DemoPlayerStateBase.generated.h"
 
+class UPlayerInventoryComponent;
 class UPlayerWalletComponent;
 /**
  * 
@@ -21,4 +22,7 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UPlayerWalletComponent> PlayerWalletComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPlayerInventoryComponent> PlayerInventoryComponent;
 };

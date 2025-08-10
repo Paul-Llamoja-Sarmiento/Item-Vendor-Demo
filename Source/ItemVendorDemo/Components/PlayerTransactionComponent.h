@@ -6,8 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "PlayerTransactionComponent.generated.h"
 
+class UPlayerInventoryComponent;
 class UPlayerWalletComponent;
 
+// TODO: Add transaction id to avoid processing the same request multiple times
 USTRUCT(BlueprintType)
 struct FPurchaseResult
 {
@@ -18,6 +20,12 @@ struct FPurchaseResult
 
 	UPROPERTY(BlueprintReadOnly)
 	FPrimaryAssetId ItemId;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 UnitPrice = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 TotalPrice = 0;
 
 	UPROPERTY(BlueprintReadOnly)
 	int32 Quantity = 0;
@@ -49,4 +57,6 @@ protected:
 
 private:
 	UPlayerWalletComponent* GetPlayerWalletComponent() const;
+
+	UPlayerInventoryComponent* GetInventoryComponent() const;
 };

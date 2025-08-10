@@ -3,6 +3,7 @@
 
 #include "PlayerTransactionComponent.h"
 
+#include "PlayerInventoryComponent.h"
 #include "PlayerWalletComponent.h"
 #include "VendorComponent.h"
 #include "GameFramework/PlayerState.h"
@@ -48,6 +49,9 @@ void UPlayerTransactionComponent::Server_RequestPurchase_Implementation(AActor* 
 		return;
 	}
 
+	Result.UnitPrice = UnitPrice;
+	Result.TotalPrice = TotalPrice;
+
 	UPlayerWalletComponent* PlayerWalletComponent = GetPlayerWalletComponent();
 	if (!IsValid(PlayerWalletComponent) || !PlayerWalletComponent->TrySpendMoney(TotalPrice))
 	{
@@ -56,8 +60,12 @@ void UPlayerTransactionComponent::Server_RequestPurchase_Implementation(AActor* 
 		return;
 	}
 
-
-	// TODO: Grant items to player's inventory
+	UPlayerInventoryComponent* InventoryComponent = GetInventoryComponent();
+	if (IsValid(InventoryComponent))
+	{
+		InventoryComponent->AddItem(ItemId, Quantity);
+	}
+	
 	Result.bSuccess = true;
 	Client_PurchaseResult(Result);	
 }
@@ -65,7 +73,7 @@ void UPlayerTransactionComponent::Server_RequestPurchase_Implementation(AActor* 
 
 void UPlayerTransactionComponent::Client_PurchaseResult_Implementation(const FPurchaseResult& Result)
 {
-	UE_LOG(LogTemp, Display, TEXT("Client_PurchaseResult_Implementation"));
+	UE_LOG(LogTemp, Warning, TEXT("TODO: Client_PurchaseResult_Implementation"));
 }
 
 void UPlayerTransactionComponent::BeginPlay()
@@ -82,5 +90,16 @@ UPlayerWalletComponent* UPlayerTransactionComponent::GetPlayerWalletComponent() 
 
 	APlayerState* PlayerState = Cast<APlayerController>(GetOwner())->PlayerState;
 	return PlayerState ? PlayerState->FindComponentByClass<UPlayerWalletComponent>() : nullptr;
+}
+
+UPlayerInventoryComponent* UPlayerTransactionComponent::GetInventoryComponent() const
+{
+	if (GetOwner() == nullptr || !GetOwner()->HasAuthority())
+	{
+		return nullptr;
+	}
+
+	APlayerState* PlayerState = Cast<APlayerController>(GetOwner())->PlayerState;
+	return PlayerState ? PlayerState->FindComponentByClass<UPlayerInventoryComponent>() : nullptr;
 }
 

@@ -3,6 +3,7 @@
 
 #include "DemoPlayerStateBase.h"
 
+#include "ItemVendorDemo/Components/PlayerInventoryComponent.h"
 #include "ItemVendorDemo/Components/PlayerWalletComponent.h"
 
 
@@ -10,4 +11,5 @@ ADemoPlayerStateBase::ADemoPlayerStateBase()
 {
 	bReplicates = true;
 	PlayerWalletComponent = CreateDefaultSubobject<UPlayerWalletComponent>(TEXT("PlayerWalletComponent"));
+	PlayerInventoryComponent = CreateDefaultSubobject<UPlayerInventoryComponent>(TEXT("PlayerInventoryComponent"));
 }
