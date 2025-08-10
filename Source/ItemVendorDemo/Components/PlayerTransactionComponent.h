@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "PlayerTransactionComponent.generated.h"
 
+
+class UNiagaraComponent;
+class UNiagaraSystem;
 class UPlayerInventoryComponent;
 class UPlayerWalletComponent;
 
@@ -53,6 +56,12 @@ public:
 	void Client_PurchaseResult(const FPurchaseResult& Result);
 
 protected:
+	// Coupled here for simplicity
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> PurchaseEffect;
+
+	FTimerHandle PurchaseTimerHandle;
+	
 	virtual void BeginPlay() override;
 
 private:

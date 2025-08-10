@@ -13,10 +13,10 @@ struct FInventoryItem: public FFastArraySerializerItem
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	FPrimaryAssetId ItemId;
+	FPrimaryAssetId ItemId = FPrimaryAssetId();
 
 	UPROPERTY(BlueprintReadOnly)
-	int32 Quantity;
+	int32 Quantity = 0;
 };
 
 

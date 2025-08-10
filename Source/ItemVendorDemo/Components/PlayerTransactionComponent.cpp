@@ -3,10 +3,13 @@
 
 #include "PlayerTransactionComponent.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "PlayerInventoryComponent.h"
 #include "PlayerWalletComponent.h"
 #include "VendorComponent.h"
 #include "GameFramework/PlayerState.h"
+#include "NiagaraSystem.h"
 
 
 UPlayerTransactionComponent::UPlayerTransactionComponent()
@@ -73,7 +76,28 @@ void UPlayerTransactionComponent::Server_RequestPurchase_Implementation(AActor* 
 
 void UPlayerTransactionComponent::Client_PurchaseResult_Implementation(const FPurchaseResult& Result)
 {
-	UE_LOG(LogTemp, Warning, TEXT("TODO: Client_PurchaseResult_Implementation"));
+	// Simple feedback effect
+	// Done here for simplicity.
+	APlayerController* PlayerController = Cast<APlayerController>(GetOwner());
+	if (!IsValid(PlayerController))
+	{
+		return;
+	}
+
+	APawn* ControlledPawn = PlayerController->GetPawn();
+	if (Result.bSuccess && IsValid(ControlledPawn) && IsValid(PurchaseEffect))
+	{
+		FVector SpawnLocation = ControlledPawn->GetActorLocation();
+		SpawnLocation.Z += 50.0f;
+		UNiagaraComponent* PurchaseEffectInstance = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), PurchaseEffect, SpawnLocation);
+		GetWorld()->GetTimerManager().SetTimer(PurchaseTimerHandle, [this, PurchaseEffectInstance]()
+		{
+			if (IsValid(PurchaseEffectInstance))
+			{
+				PurchaseEffectInstance->DestroyComponent();
+			}
+		}, 1.0f, false);
+	}
 }
 
 void UPlayerTransactionComponent::BeginPlay()
